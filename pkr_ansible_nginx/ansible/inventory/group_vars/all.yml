@@ -1,0 +1,3 @@
+ssl_certificate_path: /etc/nginx/ssl/nginx-selfsigned.crt
+ssl_key_path: /etc/nginx/ssl/nginx-selfsigned.key
+nginx_config_path: /etc/nginx/sites-available/default
