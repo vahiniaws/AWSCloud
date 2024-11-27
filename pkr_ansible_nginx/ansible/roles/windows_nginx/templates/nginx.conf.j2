@@ -1,0 +1,17 @@
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    server {
+        listen       443 ssl;
+        ssl_certificate "C:\\nginx\\ssl\\certificate.crt";
+        ssl_certificate_key "C:\\nginx\\ssl\\key.key";
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+    }
+}
