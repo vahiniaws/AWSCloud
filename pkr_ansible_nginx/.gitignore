@@ -1,1 +1,18 @@
+# Ignore Python cache files
+*.pyc
+__pycache__/
 
+# Ignore private keys and sensitive files
+certs/
+*.pem
+*.key
+
+# Ignore Packer build artifacts
+packer/builds/
+
+# Ansible logs
+*.retry
+
+# IDE files
+.vscode/
+.idea/
