@@ -1,0 +1,27 @@
+---
+- name: Install Nginx on Windows EC2
+  hosts: windows
+  tasks:
+    - name: Download Nginx
+      win_get_url:
+        url: https://nginx.org/download/nginx-1.24.0.zip
+        dest: C:\nginx.zip
+
+    - name: Extract Nginx
+      win_unzip:
+        src: C:\nginx.zip
+        dest: C:\nginx
+        remote_src: true
+
+    - name: Install self-signed certificate
+      win_shell: |
+        New-SelfSignedCertificate -DnsName "localhost" -CertStoreLocation "Cert:\LocalMachine\My"
+
+    - name: Configure Nginx for HTTPS
+      win_template:
+        src: nginx.conf.j2
+        dest: C:\nginx\conf\nginx.conf
+
+    - name: Start Nginx
+      win_shell: |
+        Start-Process -FilePath "C:\nginx\nginx.exe"
