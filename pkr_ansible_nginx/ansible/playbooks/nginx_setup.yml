@@ -1,0 +1,17 @@
+---
+- name: Setup Nginx on EC2 instance
+  hosts: ec2_instance
+  become: true
+  tasks:
+    - name: Update apt repository and install prerequisites
+      apt:
+        update_cache: yes
+        name: 
+          - nginx
+        state: latest
+
+    - name: Start and enable Nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
