@@ -1,0 +1,43 @@
+---
+- name: Setup Nginx with HTTPS
+  hosts: ec2_instance
+  become: true
+  vars:
+    ssl_certificate_path: /etc/nginx/ssl/nginx-selfsigned.crt
+    ssl_key_path: /etc/nginx/ssl/nginx-selfsigned.key
+    nginx_config_path: /etc/nginx/sites-available/default
+  tasks:
+    - name: Install OpenSSL
+      apt:
+        name: openssl
+        state: latest
+
+    - name: Create SSL directory
+      file:
+        path: /etc/nginx/ssl
+        state: directory
+        mode: '0755'
+
+    - name: Generate self-signed SSL certificate
+      command: >
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048
+        -keyout {{ ssl_key_path }} -out {{ ssl_certificate_path }}
+        -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
+
+    - name: Configure Nginx for HTTPS
+      blockinfile:
+        path: "{{ nginx_config_path }}"
+        insertafter: "# HTTPS server"
+        block: |
+          server {
+              listen 443 ssl;
+              ssl_certificate {{ ssl_certificate_path }};
+              ssl_certificate_key {{ ssl_key_path }};
+              location / {
+                  root /var/www/html;
+                  index index.html;
+              }
+          }
+
+    - name: Test and reload Nginx
+      command: nginx -t && systemctl reload nginx
