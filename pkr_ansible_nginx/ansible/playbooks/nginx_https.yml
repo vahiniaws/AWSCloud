@@ -7,10 +7,17 @@
     ssl_key_path: /etc/nginx/ssl/nginx-selfsigned.key
     nginx_config_path: /etc/nginx/sites-available/default
   tasks:
-    - name: Install OpenSSL
+    - name: Install OpenSSL (for SSL certificate generation)
       apt:
         name: openssl
         state: latest
+      when: ansible_facts.os_family == "Debian"  
+
+    - name: Install Nginx (if not already installed)
+      apt:
+        name: nginx
+        state: present
+      when: ansible_facts.os_family == "Debian"  
 
     - name: Create SSL directory
       file:
@@ -23,11 +30,12 @@
         openssl req -x509 -nodes -days 365 -newkey rsa:2048
         -keyout {{ ssl_key_path }} -out {{ ssl_certificate_path }}
         -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
+      creates: "{{ ssl_certificate_path }}" 
 
     - name: Configure Nginx for HTTPS
       blockinfile:
         path: "{{ nginx_config_path }}"
-        insertafter: "# HTTPS server"
+        insertafter: "# HTTPS server"  
         block: |
           server {
               listen 443 ssl;
@@ -39,5 +47,6 @@
               }
           }
 
-    - name: Test and reload Nginx
+    - name: Test and reload Nginx configuration
       command: nginx -t && systemctl reload nginx
+      become: true  # Ensure this task runs with elevated privileges
