@@ -1,6 +1,11 @@
   profile       = "awsprofile"
-  ami_name      = "aws-nginx"
+  ami_name      = "aws-ubuntu-nginx"
   instance_type = "t2.micro"
   region        = "us-east-1"
   source_ami    = "ami-053b0d53c279acc90"
   ssh_username  = "ubuntu"
+
+ winrm_username = "Administrator"
+ winrm_password ="SuperS3cr3t!!!!"
+ ami_name_win   = "aws-win-nginx"
+ source_ami_win = "ami-0d86c69530d0a048e"
