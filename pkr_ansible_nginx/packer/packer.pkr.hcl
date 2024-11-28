@@ -1,4 +1,4 @@
-
+{
  build {
   name = "packer-ubuntu-build"
   sources = [
@@ -20,4 +20,4 @@
   provisioner "shell" {
     script= "../scripts/cleanup.sh"
   }
-
+}
