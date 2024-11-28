@@ -1,18 +1,23 @@
-{
-  "builders": [
-    {
-      "type": "amazon-ebs",
-      "region": "us-east-1",
-      "source_ami": "ami-12345678",
-      "instance_type": "t2.micro",
-      "ssh_username": "ubuntu",
-      "ami_name": "nginx-https-ami {{timestamp}}"
-    }
-  ],
-  "provisioners": [
-    {
-      "type": "ansible",
-      "playbook_file": "../ansible/playbooks/nginx_https.yml"
-    }
+
+ build {
+  name = "packer-ubuntu-build"
+  sources = [
+    "source.amazon-ebs.ubuntu"
   ]
-}
+   sources = [
+    "source.amazon-ebs.win"
+  ]
+  ],
+  # Install Ansible
+  provisioner "shell" {
+    script= "../scripts/install_dependencies.sh"
+  }
+
+  provisioner "ansible-local" {
+    playbook_file = "../ansible/playbooks/nginx_https.yml"
+  }
+
+  provisioner "shell" {
+    script= "../scripts/cleanup.sh"
+  }
+
